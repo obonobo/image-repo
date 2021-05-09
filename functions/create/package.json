@@ -1,0 +1,16 @@
+{
+  "name": "create",
+  "version": "1.0.0",
+  "description": "Upload an image to S3",
+  "main": "index.js",
+  "author": "obonobo",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn clean; yarn install --prod && zip -r create.zip .",
+    "clean": "rm -rf node_modules; rm create.zip"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "aws-sdk": "^2.903.0"
+  }
+}

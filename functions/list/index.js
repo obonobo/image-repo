@@ -1,16 +1,21 @@
-console.log("Loading function");
-const aws = require("aws-sdk");
-const s3 = new aws.S3({ apiVersion: "2006-03-01" });
+const { S3 } = require("aws-sdk");
 
-exports.handler = async (event, context) => {
+const s3 = new S3({ apiVersion: "latest" });
+
+const responseHeaders = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST,GET",
+};
+
+exports.handler = async () => {
   const bucket = "image-repo-obonobo";
   const params = { Bucket: bucket };
   try {
     const data = await s3.listObjectsV2(params).promise();
     const response = {
-      isBase64Encoded: false,
       statusCode: 200,
-      headers: {},
+      headers: responseHeaders,
       body: JSON.stringify(
         data.Contents.map((img) => ({
           file: img.Key,

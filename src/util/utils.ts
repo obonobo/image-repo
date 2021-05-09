@@ -5,13 +5,9 @@ const awsconfig = {
     region: "us-east-1",
   },
   api: {
-    invokeUrl: "", // e.g. https://rc7nyt4tql.execute-api.us-west-2.amazonaws.com/prod',
+    invokeUrl: "https://slk6wjc4ii.execute-api.us-east-1.amazonaws.com/test",
   },
 };
 
-const assetPrefix = process.env.ASSET_PREFIX || "";
-const urlFor = (path = "/"): string => `${assetPrefix}${path}`;
-const redirect = (path = "/"): void =>
-  window?.location?.replace(`${assetPrefix}${path}`);
-
-export { assetPrefix, redirect, urlFor, awsconfig };
+const urlFor = (path = "/"): string => `${awsconfig.api.invokeUrl}${path}`;
+export { urlFor, awsconfig };

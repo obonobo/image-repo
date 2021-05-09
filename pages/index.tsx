@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import HelloWorld from "../src/components/HelloWorld";
+import FileGridBase from "../src/components/FileGrid";
 
 const Content = styled.div`
   justify-content: center;
@@ -12,10 +12,10 @@ const Content = styled.div`
   }
 `;
 
-const Home = () => (
+const Home = (): JSX.Element => (
   <main>
     <Content>
-      <HelloWorld />
+      <FileGridBase />
     </Content>
   </main>
 );
