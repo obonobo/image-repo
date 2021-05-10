@@ -1,6 +1,6 @@
 # image-repo
 
-Check out the live demo: <https://main.durd9urlnguo0.amplifyapp.com/>
+Check out the live demo: <https://main.dot4pvtqrzsbl.amplifyapp.com/>
 
 Image repository for Shopify developer challenge.
 
