@@ -19,9 +19,9 @@ type File = {
 const getFileListing = async (): Promise<File[]> => {
   try {
     const got = await axios.get(urlFor("/images"));
-    console.log(got.data);
+    console.log(got.data.data);
 
-    return (got.data as File[]).map((f) => ({
+    return (got.data.data as File[]).map((f) => ({
       id: f.file,
       name: f.file,
       size: f.size,

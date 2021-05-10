@@ -1,7 +1,7 @@
 import { Context, Handler } from "aws-lambda";
 import dotenv from "dotenv";
 import path from "path";
-import HelloController from "./controller/HelloController";
+import ImageRepoController from "./controller/ImageRepoController";
 
 const dotenvPath = path.join(
   __dirname,
@@ -12,16 +12,19 @@ dotenv.config({
   path: dotenvPath,
 });
 
-const helloController = new HelloController();
+const imageRepoController = new ImageRepoController();
 
 export const hello: Handler = (event: any, context: Context) =>
-  helloController.hello(event, context);
+  imageRepoController.hello(event, context);
 
 export const create: Handler = (event: any, context: Context) =>
-  helloController.create(event, context);
+  imageRepoController.create(event, context);
 
 export const list: Handler = (event: any, context: Context) =>
-  helloController.list(event, context);
+  imageRepoController.list(event, context);
 
 export const retrieve: Handler = (event: any, context: Context) =>
-  helloController.retrieve(event, context);
+  imageRepoController.retrieve(event, context);
+
+export const optionsAllowCors: Handler = (event: any, context: Context) =>
+  imageRepoController.optionsAllowCors(event, context);

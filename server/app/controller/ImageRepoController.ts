@@ -1,11 +1,11 @@
 import { Context } from "aws-lambda";
-import HelloService from "../service/HelloService";
+import ImageRepoService from "../service/ImageRepoService";
 import MessageUtils, {
   PreparedResult,
   StatusCode,
 } from "../utils/MessageUtils";
 
-export default class HelloController extends HelloService {
+export default class ImageRepoController extends ImageRepoService {
   async hello(_: unknown, context: Context): Promise<PreparedResult> {
     this.logExecution(context);
     return MessageUtils.success(await this.getHelloMessage());
@@ -25,7 +25,7 @@ export default class HelloController extends HelloService {
     }
   }
 
-  async list(event: any, context: Context): Promise<PreparedResult> {
+  async list(_: any, context: Context): Promise<PreparedResult> {
     this.logExecution(context);
     try {
       const response = await this.listItemsInS3();
@@ -63,6 +63,19 @@ export default class HelloController extends HelloService {
       console.error(err);
       return MessageUtils.unprocessableEntity();
     }
+  }
+
+  async optionsAllowCors(_: any, context: Context): Promise<PreparedResult> {
+    this.logExecution(context);
+    return {
+      statusCode: StatusCode.success,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods":
+          "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT",
+      },
+    };
   }
 
   private parseNamePathParam(event: any): string {

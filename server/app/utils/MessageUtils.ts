@@ -9,7 +9,7 @@ export enum StatusCode {
 
 export type PreparedResult = {
   statusCode: number;
-  body: string;
+  body?: string;
   isBase64Encoded?: boolean;
   headers?: { [key: string]: string };
 };

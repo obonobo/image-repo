@@ -13,7 +13,7 @@ provider:
 
   apiGateway:
     binaryMediaTypes:
-      - '*/*'
+      - "*/*"
 
   lambdaHashingVersion: 20201221
 
@@ -54,3 +54,10 @@ functions:
       - http:
           path: images/{name}
           method: get
+
+  optionsAllowCors:
+    handler: app/handler.optionsAllowCors
+    events:
+      - http:
+          path: images
+          method: options

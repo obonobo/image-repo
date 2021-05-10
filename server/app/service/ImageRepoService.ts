@@ -8,7 +8,7 @@ export type S3Params =
   | S3.ListObjectsRequest
   | S3.GetObjectRequest;
 
-export default class HelloService {
+export default class ImageRepoService {
   private s3: S3;
 
   constructor(s3: S3 = null) {
