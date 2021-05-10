@@ -3,11 +3,18 @@ service: image-repo-serverless
 provider:
   name: aws
   runtime: nodejs14.x
+
   iam:
     role: arn:aws:iam::081940731328:role/lambda-s3
+
   environment:
     NODE_ENV: dev
     S3_BUCKET: image-repo-obonobo
+
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
   lambdaHashingVersion: 20201221
 
 plugins:

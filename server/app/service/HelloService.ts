@@ -34,9 +34,9 @@ export default class HelloService {
     return this.uploadToS3(params);
   }
 
-  protected async listItemsInS3(
-    event: any
-  ): Promise<PromiseResult<S3.ListObjectsV2Output, AWSError>> {
+  protected async listItemsInS3(): Promise<
+    PromiseResult<S3.ListObjectsV2Output, AWSError>
+  > {
     const s3Params = this.createS3Params({ type: "list" });
     return this.s3.listObjectsV2(s3Params).promise();
   }

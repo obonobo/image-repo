@@ -28,7 +28,7 @@ export default class HelloController extends HelloService {
   async list(event: any, context: Context): Promise<PreparedResult> {
     this.logExecution(context);
     try {
-      const response = await this.listItemsInS3(event);
+      const response = await this.listItemsInS3();
       return MessageUtils.success(
         response.Contents.map((img) => ({
           file: img.Key,
@@ -55,8 +55,8 @@ export default class HelloController extends HelloService {
         return MessageUtils.imageNotFoundResponse(name);
       }
       return MessageUtils.base64ImageResponse(
-        // response.Body.toString("base64"),
-        response.Body,
+        response.Body.toString("base64"),
+        // response.Body,
         response.ContentType
       );
     } catch (err) {
