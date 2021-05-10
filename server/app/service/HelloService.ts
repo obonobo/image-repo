@@ -83,7 +83,6 @@ export default class HelloService {
       case "retrieve":
         params = {
           ...params,
-          ContentType: "image/jpeg",
           Key: name,
         };
         break;

@@ -55,7 +55,8 @@ export default class HelloController extends HelloService {
         return MessageUtils.imageNotFoundResponse(name);
       }
       return MessageUtils.base64ImageResponse(
-        response.Body.toString("base64"),
+        // response.Body.toString("base64"),
+        response.Body,
         response.ContentType
       );
     } catch (err) {

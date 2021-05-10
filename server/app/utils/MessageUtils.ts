@@ -1,7 +1,10 @@
+import { S3 } from "aws-sdk";
+
 export enum StatusCode {
   success = 200,
   notFound = 404,
   unprocessableEntity = 422,
+  clientError = 400,
 }
 
 export type PreparedResult = {
@@ -12,26 +15,23 @@ export type PreparedResult = {
 };
 
 export class Result {
-  private static headers = {
+  static headers = {
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST,GET",
   };
 
   private statusCode: number;
-  private code: number;
   private message: string;
   private data?: unknown;
   private isBase64Encoded: boolean;
 
   constructor(
     statusCode: number,
-    code: number,
     message: string,
     data?: unknown,
     isBase64Encoded = false
   ) {
-    this.code = code;
     this.data = data;
     this.message = message;
     this.statusCode = statusCode;
@@ -44,7 +44,6 @@ export class Result {
   bodyToString(
     bodyFactory = (res: Result) =>
       JSON.stringify({
-        code: res.code,
         message: res.message,
         data: res.data,
       })
@@ -65,7 +64,6 @@ export default class MessageUtils {
   ): PreparedResult {
     const result = new Result(
       StatusCode.success,
-      0,
       "success",
       data,
       isBase64Encoded
@@ -73,8 +71,8 @@ export default class MessageUtils {
     return result.bodyToString();
   }
 
-  static error(message: string, code = 1000): PreparedResult {
-    const result = new Result(StatusCode.success, code, message);
+  static error(message: string, code = StatusCode.clientError): PreparedResult {
+    const result = new Result(code, message);
     const stringified = result.bodyToString();
     console.log(stringified);
     return stringified;
@@ -95,19 +93,14 @@ export default class MessageUtils {
   }
 
   static base64ImageResponse(
-    base64String: string,
+    base64String: string | S3.Body,
     contentType: string
   ): PreparedResult {
-    let result = new Result(
-      StatusCode.success,
-      0,
-      "success",
-      base64String,
-      true
-    ).bodyToString(() => base64String);
     return {
-      ...result,
-      headers: { ...result.headers, "Content-Type": contentType },
+      statusCode: StatusCode.success,
+      headers: { ...Result.headers, "Content-Type": contentType },
+      isBase64Encoded: true,
+      body: base64String as string,
     };
   }
 }
