@@ -1,43 +1,34 @@
 {
-  "name": "atmos",
-  "version": "0.1.0",
-  "private": true,
+  "name": "image-repo",
+  "version": "1.0.0",
+  "description": "Image repo",
+  "main": "index.js",
+  "author": "May",
+  "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start -p $PORT",
-    "test": "jest",
-    "export": "next export",
-    "deploy": "yarn build && yarn export -o docs"
+    "local": "serverless offline",
+    "deploy": "serverless deploy",
+    "test": "cross-env NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
+    "coverage": "nyc --reporter lcov npm run test"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.4",
-    "@material-ui/data-grid": "^4.0.0-alpha.27",
-    "@material-ui/icons": "^4.11.2",
-    "aws-sdk": "^2.903.0",
-    "axios": "^0.21.1",
-    "clsx": "^1.1.1",
-    "form-data": "^4.0.0",
-    "formidable": "^1.2.2",
-    "image-type": "^4.1.0",
-    "next": "^10.2.0",
-    "prop-types": "^15.7.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-is": "^17.0.2",
-    "styled-components": "^5.2.3"
+    "dotenv": "^9.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.0",
-    "@testing-library/dom": "^7.30.3",
-    "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^11.2.6",
-    "@types/formidable": "^1.2.1",
-    "@types/styled-components": "^5.1.9",
+    "@types/aws-lambda": "^8.10.76",
+    "@types/chai": "^4.2.18",
+    "@types/dotenv-safe": "^8.1.1",
+    "@types/lambda-tester": "^3.6.1",
+    "@types/mocha": "^8.2.2",
+    "@types/mongoose": "^5.10.5",
+    "@types/sinon": "^10.0.0",
+    "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "babel-jest": "^26.6.3",
-    "babel-plugin-styled-components": "^1.12.0",
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.903.0",
+    "chai": "^4.3.4",
+    "cross-env": "^7.0.3",
     "eslint": "^7.25.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.2.0",
@@ -48,42 +39,18 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
+    "inquirer": "^8.0.0",
+    "istanbul": "^0.4.5",
+    "lambda-tester": "^4.0.1",
+    "mocha": "^8.4.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.3.0",
+    "serverless": "^2.40.0",
+    "serverless-offline": "^7.0.0",
+    "serverless-plugin-typescript": "^1.1.9",
+    "sinon": "^10.0.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/.next/",
-      "<rootDir>/node_modules/"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/test/setupTests.js"
-    ],
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
-      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
-    },
-    "moduleNameMapper": {
-      "^.+\\.(css|less|scss)$": "identity-obj-proxy",
-      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "identity-obj-proxy"
-    }
-  },
-  "babel": {
-    "presets": [
-      "next/babel"
-    ],
-    "plugins": [
-      [
-        "styled-components",
-        {
-          "ssr": true,
-          "displayName": true,
-          "preprocess": false
-        }
-      ]
-    ]
   },
   "eslintConfig": {
     "ignorePatterns": [
@@ -104,8 +71,7 @@
             ".ts",
             ".tsx"
           ]
-        },
-        "webpack": {}
+        }
       },
       "import/extensions": [
         ".js",
@@ -129,8 +95,6 @@
     "parser": "@typescript-eslint/parser",
     "plugins": [
       "@typescript-eslint",
-      "react",
-      "react-hooks",
       "prettier"
     ],
     "extends": [
@@ -169,6 +133,13 @@
       "react-hooks/exhaustive-deps": "warn",
       "react-hooks/rules-of-hooks": "error",
       "react/require-default-props": "off",
+      "class-methods-use-this": "off",
+      "no-shadow": "off",
+      "@typescript-eslint/no-shadow": "error",
+      "max-classes-per-file": [
+        "error",
+        3
+      ],
       "import/no-extraneous-dependencies": [
         "error",
         {

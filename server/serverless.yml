@@ -1,0 +1,42 @@
+service: image-repo-serverless
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role: arn:aws:iam::081940731328:role/lambda-s3
+  environment:
+    NODE_ENV: dev
+    S3_BUCKET: image-repo-obonobo
+  lambdaHashingVersion: 20201221
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+package:
+  patterns:
+    - "!config/.env.stg"
+    - "!config/.env.pro"
+    - "config/.env.dev"
+
+functions:
+  hello:
+    handler: app/handler.hello
+    events:
+      - http:
+          path: hello
+          method: get
+  list:
+    handler: app/handler.list
+    events:
+      - http:
+          path: images
+          method: get
+
+  create:
+    handler: app/handler.create
+    events:
+      - http:
+          path: images
+          method: post
