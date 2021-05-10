@@ -22,3 +22,6 @@ export const create: Handler = (event: any, context: Context) =>
 
 export const list: Handler = (event: any, context: Context) =>
   helloController.list(event, context);
+
+export const retrieve: Handler = (event: any, context: Context) =>
+  helloController.retrieve(event, context);

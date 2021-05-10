@@ -1,8 +1,12 @@
 import { AWSError, S3 } from "aws-sdk";
 import { PromiseResult } from "aws-sdk/lib/request";
+import imageType from "image-type";
 import { BUCKET } from "../model/s3";
 
-export type S3Params = S3.PutObjectRequest | S3.ListObjectsRequest;
+export type S3Params =
+  | S3.PutObjectRequest
+  | S3.ListObjectsRequest
+  | S3.GetObjectRequest;
 
 export default class HelloService {
   private s3: S3;
@@ -37,6 +41,20 @@ export default class HelloService {
     return this.s3.listObjectsV2(s3Params).promise();
   }
 
+  protected async retreiveItemByName(
+    name: string
+  ): Promise<PromiseResult<S3.GetObjectOutput, AWSError>> {
+    const params = this.createS3Params({ type: "retrieve", name });
+    return this.s3.getObject(params as S3.GetObjectRequest).promise();
+  }
+
+  protected isNotImage(s3Response: S3.GetObjectOutput): boolean {
+    return (
+      !/^image\/.*$/.test(s3Response.ContentType) ||
+      !imageType(s3Response.Body as Buffer)
+    );
+  }
+
   private async uploadToS3(params: S3Params) {
     return this.s3.upload(params as S3.PutObjectRequest).promise();
   }
@@ -45,10 +63,12 @@ export default class HelloService {
     type,
     bodyAsJson,
     decodedImage,
+    name,
   }: {
-    type: "create" | "list";
+    type: "create" | "list" | "retrieve";
     bodyAsJson?: any;
     decodedImage?: Buffer;
+    name?: string;
   }): S3Params {
     let params: S3Params = { Bucket: BUCKET };
     switch (type) {
@@ -58,6 +78,13 @@ export default class HelloService {
           ContentType: "image/jpeg",
           Key: bodyAsJson?.file?.filename ?? "_.jpeg",
           Body: decodedImage,
+        };
+        break;
+      case "retrieve":
+        params = {
+          ...params,
+          ContentType: "image/jpeg",
+          Key: name,
         };
         break;
       case "list":

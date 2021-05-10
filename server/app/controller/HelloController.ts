@@ -1,6 +1,9 @@
 import { Context } from "aws-lambda";
 import HelloService from "../service/HelloService";
-import MessageUtils, { PreparedResult } from "../utils/MessageUtils";
+import MessageUtils, {
+  PreparedResult,
+  StatusCode,
+} from "../utils/MessageUtils";
 
 export default class HelloController extends HelloService {
   async hello(_: unknown, context: Context): Promise<PreparedResult> {
@@ -15,7 +18,10 @@ export default class HelloController extends HelloService {
       return MessageUtils.success();
     } catch (err) {
       console.error(err);
-      return MessageUtils.error("Unable to process file...", 421);
+      return MessageUtils.error(
+        "Unable to process file...",
+        StatusCode.unprocessableEntity
+      );
     }
   }
 
@@ -36,6 +42,30 @@ export default class HelloController extends HelloService {
       console.log(message);
       throw new Error(message);
     }
+  }
+
+  async retrieve(event: any, context: Context): Promise<PreparedResult> {
+    this.logExecution(context);
+    const name = this.parseNamePathParam(event);
+    if (!name) return MessageUtils.imageNotFoundResponse(name);
+
+    try {
+      const response = await this.retreiveItemByName(name);
+      if (this.isNotImage(response)) {
+        return MessageUtils.imageNotFoundResponse(name);
+      }
+      return MessageUtils.base64ImageResponse(
+        response.Body.toString("base64"),
+        response.ContentType
+      );
+    } catch (err) {
+      console.error(err);
+      return MessageUtils.unprocessableEntity();
+    }
+  }
+
+  private parseNamePathParam(event: any): string {
+    return event.pathParameters.name;
   }
 
   private logExecution(context: Context) {

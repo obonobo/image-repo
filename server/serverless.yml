@@ -40,3 +40,10 @@ functions:
       - http:
           path: images
           method: post
+
+  retrieve:
+    handler: app/handler.retrieve
+    events:
+      - http:
+          path: images/{name}
+          method: get

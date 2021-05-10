@@ -12,7 +12,8 @@
     "coverage": "nyc --reporter lcov npm run test"
   },
   "dependencies": {
-    "dotenv": "^9.0.1"
+    "dotenv": "^9.0.1",
+    "image-type": "^4.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.76",
@@ -136,6 +137,9 @@
       "class-methods-use-this": "off",
       "no-shadow": "off",
       "@typescript-eslint/no-shadow": "error",
+      "lines-between-class-members": {
+        "exceptAfterSingleLine": true
+      },
       "max-classes-per-file": [
         "error",
         3
