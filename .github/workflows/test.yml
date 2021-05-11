@@ -16,13 +16,13 @@ on:
         description: "Test scenario tags"
 
 jobs:
-  test:
-    name: Yarn Build and Test
+  test-client:
+    name: Client Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        node-version: ["^15"]
+        node-version: ["^15", "14"]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -30,7 +30,26 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: |
+          cd client
           yarn install --dev
           yarn test
           yarn build
           yarn export && rm -rf out/
+
+  test-server:
+    name: Server Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: ["^15", "14"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          cd server
+          yarn install --dev
+          yarn test

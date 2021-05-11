@@ -1,4 +1,4 @@
-name: Deploy Site to GitHub Pages
+name: Deploy Site
 
 on:
   push:
@@ -21,6 +21,7 @@ jobs:
       - name: Run tests
         run: |
           echo Running pre-deployment tests
+          cd client
           yarn install --dev
           yarn build
           yarn test
@@ -48,14 +49,16 @@ jobs:
           git checkout -b site
           git reset --hard origin/main
 
+
+          cd client
           yarn install --dev
           yarn add --dev typescript
-          yarn deploy
-          touch docs/.nojekyll
+          yarn build && yarn export -o ../docs
+          touch ../docs/.nojekyll
 
           git status
           git add -A :/
-          git add docs/
+          git add ../docs/
           git status
           git commit -m 'GitHub Actions: deploying to origin/site'
           git push --force --set-upstream origin site
