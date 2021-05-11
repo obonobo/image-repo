@@ -8,8 +8,9 @@
   "scripts": {
     "local": "serverless offline",
     "deploy": "serverless deploy",
-    "test": "cross-env NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
-    "coverage": "nyc --reporter lcov npm run test"
+    "test": "cross-env NODE_ENV=dev jest",
+    "test2": "cross-env NODE_ENV=dev mocha -r ts-node/register tests/*.test.ts --exit",
+    "coverage": "nyc --reporter lcov yarn test"
   },
   "dependencies": {
     "dotenv": "^9.0.1",
@@ -19,6 +20,7 @@
     "@types/aws-lambda": "^8.10.76",
     "@types/chai": "^4.2.18",
     "@types/dotenv-safe": "^8.1.1",
+    "@types/jest": "^26.0.23",
     "@types/lambda-tester": "^3.6.1",
     "@types/mocha": "^8.2.2",
     "@types/mongoose": "^5.10.5",
@@ -40,18 +42,48 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "inquirer": "^8.0.0",
+    "identity-obj-proxy": "^3.0.0",
+    "inquirer": "^7.0.0",
     "istanbul": "^0.4.5",
+    "jest": "^26.6.3",
     "lambda-tester": "^4.0.1",
-    "mocha": "^8.4.0",
     "nyc": "^15.1.0",
     "prettier": "^2.3.0",
     "serverless": "^2.40.0",
     "serverless-offline": "^7.0.0",
     "serverless-plugin-typescript": "^1.1.9",
     "sinon": "^10.0.0",
+    "ts-jest": "^26.5.6",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
+  },
+  "jest": {
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/.next/",
+      "<rootDir>/node_modules/",
+      "<rootDir>/PRIVATE/"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setupTests.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    },
+    "moduleNameMapper": {
+      "^.+\\.(css|less|scss)$": "identity-obj-proxy",
+      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "identity-obj-proxy"
+    }
   },
   "eslintConfig": {
     "ignorePatterns": [

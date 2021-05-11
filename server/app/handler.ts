@@ -2,6 +2,7 @@ import { APIGatewayEvent, Context, Handler } from "aws-lambda";
 import dotenv from "dotenv";
 import path from "path";
 import ImageRepoController from "./controller/ImageRepoController";
+import s3 from "./model/s3";
 
 const dotenvPath = path.join(
   __dirname,
@@ -12,7 +13,7 @@ dotenv.config({
   path: dotenvPath,
 });
 
-const imageRepoController = new ImageRepoController();
+const imageRepoController = new ImageRepoController(s3);
 
 export const hello: Handler = (event: APIGatewayEvent, context: Context) =>
   imageRepoController.hello(event, context);

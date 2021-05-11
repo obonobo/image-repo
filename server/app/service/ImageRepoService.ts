@@ -12,7 +12,7 @@ export type S3Params =
 export default class ImageRepoService {
   private s3: S3;
 
-  constructor(s3: S3 = null) {
+  constructor(s3: S3) {
     this.s3 = s3 ?? new S3({ apiVersion: "latest" });
   }
 

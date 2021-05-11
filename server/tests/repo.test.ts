@@ -1,217 +1,34 @@
-import lambdaTester from 'lambda-tester';
-import { expect } from 'chai';
-import * as booksMock from './repo.mock';
-import sinon from 'sinon';
+import * as s3Mock from "./s3.mock";
+import lambdaTester from "lambda-tester";
+import { assert, expect } from "chai";
+import sinon from "sinon";
+import { list } from "../app/handler";
+import { PreparedResult } from "../app/utils/MessageUtils";
+import s3 from "../app/model/s3";
 
-
-describe('FindOne [GET]', () => {
-  it('success', () => {
+describe("List Images - GET /images", () => {
+  it("success", () => {
     try {
-      const s = sinon
-        .mock(BooksModel);
+      const mockedS3 = sinon.mock(s3);
+      mockedS3.expects("listObjectsV2").exactly(1).returns(s3Mock.imageListing);
 
-      s.expects('findOne')
-        .atLeast(1)
-        .atMost(3)
-        .resolves(booksMock.findOne);
-
-      return lambdaTester(findOne)
-      .event({ pathParameters: { id: 25768396 } })
-      .expectResult((result: any) => {
+      return lambdaTester(list).expectResult((result: PreparedResult) => {
         expect(result.statusCode).to.equal(200);
+        expect(result.body).is.not.null;
         const body = JSON.parse(result.body);
-        expect(body.code).to.equal(0);
-        s.verify();
-        s.restore();
+        expect(body.message).to.equal("success");
+        assert(
+          body.data.reduce(
+            (p: boolean, c: any) => p || c["file"] === "cat.jpeg",
+            false
+          ),
+          "Check that the return value has a cat.jpeg pic in it"
+        );
+        mockedS3.verify();
+        mockedS3.restore();
       });
     } catch (err) {
       console.log(err);
     }
-  });
-
-  it('error', () => {
-    try {
-      const s = sinon
-        .mock(BooksModel);
-
-      s.expects('findOne')
-        .rejects(booksMock.castError);
-
-      return lambdaTester(findOne)
-      .event({ pathParameters: { id: 25768396 } })
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(1000);
-        s.restore();
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  });
-});
-
-describe('Find [GET]', () => {
-  it('success', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('find')
-      .resolves(booksMock.find);
-
-    return lambdaTester(find)
-    .event({})
-    .expectResult((result: any) => {
-      expect(result.statusCode).to.equal(200);
-      const body = JSON.parse(result.body);
-      expect(body.code).to.equal(0);
-      s.restore();
-    });
-  });
-
-  it('error', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('find').rejects(booksMock.findError);
-
-    return lambdaTester(find)
-    .event({})
-    .expectResult((result: any) => {
-      expect(result.statusCode).to.equal(200);
-      const body = JSON.parse(result.body);
-      expect(body.code).to.equal(1000);
-      s.restore();
-    });
-  });
-});
-
-describe('Create [POST]', () => {
-  it('success', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('create').resolves(booksMock.create);
-
-    return lambdaTester(create)
-      .event({ body: JSON.stringify({
-        name: 'Node.js：来一打 C++ 扩展',
-        id: 30247892,
-      })})
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(0);
-        s.restore();
-      });
-  });
-
-  it('error', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('create').rejects(booksMock.createError);
-
-    return lambdaTester(create)
-      .event({ body: JSON.stringify({
-        name: 'Node.js：来一打 C++ 扩展',
-        id: 30247892,
-      })})
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(1000);
-        s.restore();
-      });
-  });
-});
-
-describe('Update [PUT]', () => {
-  it('success', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('findOneAndUpdate').resolves(booksMock.update);
-
-    return lambdaTester(update)
-      .event({ pathParameters: { id: 30247892 }, body: JSON.stringify({
-        name: 'Node.js：来一打 C++ 扩展',
-        description: '阅读《Node.js：来一打 C++ 扩展》，相当于同时学习Chrome V8 开发、libuv 开发以及 Node.js 的原生 C++ 扩展开发知识，非常值得！',
-      })})
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(0);
-        s.restore();
-      });
-  });
-
-  it('error', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('findOneAndUpdate').rejects(booksMock.castError);
-
-    return lambdaTester(update)
-      .event({  pathParameters: { id: '30247892_' }, body: JSON.stringify({
-        name: 'Node.js：来一打 C++ 扩展',
-        description: '阅读《Node.js：来一打 C++ 扩展》，相当于同时学习Chrome V8 开发、libuv 开发以及 Node.js 的原生 C++ 扩展开发知识，非常值得！',
-      })})
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(1000);
-        s.restore();
-      });
-  });
-});
-
-describe('DeleteOne [Delete]', () => {
-  it('success', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('deleteOne').resolves(booksMock.deleteOne);
-
-    return lambdaTester(deleteOne)
-      .event({  pathParameters: { id: 30247892 } })
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(0);
-        s.restore();
-      });
-  });
-
-  it('deletedCount === 0', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('deleteOne').resolves(booksMock.deletedCount);
-
-    return lambdaTester(deleteOne)
-      .event({ pathParameters: { id: 30247892 } })
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(1010);
-        s.restore();
-      });
-  });
-
-  it('error', () => {
-    const s = sinon
-      .mock(BooksModel);
-
-    s.expects('deleteOne').rejects(booksMock.castError);
-
-    return lambdaTester(deleteOne)
-      .event({ pathParameters: { id: '30247892_' } })
-      .expectResult((result: any) => {
-        expect(result.statusCode).to.equal(200);
-        const body = JSON.parse(result.body);
-        expect(body.code).to.equal(1000);
-        s.restore();
-      });
   });
 });
