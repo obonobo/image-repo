@@ -1,3 +1,4 @@
+import { APIGatewayEvent } from "aws-lambda";
 import { AWSError, S3 } from "aws-sdk";
 import { PromiseResult } from "aws-sdk/lib/request";
 import imageType from "image-type";
@@ -20,7 +21,7 @@ export default class ImageRepoService {
   }
 
   protected async addNewImageToS3(
-    event: any
+    event: APIGatewayEvent
   ): Promise<S3.ManagedUpload.SendData> {
     const bodyAsJson = this.decodeEventBodyBase64(event);
     const decodedImage = this.decodeImage(bodyAsJson?.file?.bytes);
@@ -95,7 +96,7 @@ export default class ImageRepoService {
     return params;
   }
 
-  private decodeEventBodyBase64(event: any) {
+  private decodeEventBodyBase64(event: APIGatewayEvent) {
     const decoded = JSON.parse(Buffer.from(event?.body, "base64").toString());
     console.log("Decoding event body...", decoded);
     return decoded;

@@ -1,4 +1,4 @@
-import { Context } from "aws-lambda";
+import { APIGatewayEvent, Context } from "aws-lambda";
 import ImageRepoService from "../service/ImageRepoService";
 import MessageUtils, {
   PreparedResult,
@@ -11,7 +11,10 @@ export default class ImageRepoController extends ImageRepoService {
     return MessageUtils.success(await this.getHelloMessage());
   }
 
-  async create(event: any, context: Context): Promise<PreparedResult> {
+  async create(
+    event: APIGatewayEvent,
+    context: Context
+  ): Promise<PreparedResult> {
     this.logExecution(context);
     try {
       await this.addNewImageToS3(event);
@@ -25,7 +28,7 @@ export default class ImageRepoController extends ImageRepoService {
     }
   }
 
-  async list(_: any, context: Context): Promise<PreparedResult> {
+  async list(_: APIGatewayEvent, context: Context): Promise<PreparedResult> {
     this.logExecution(context);
     try {
       const response = await this.listItemsInS3();
@@ -44,7 +47,10 @@ export default class ImageRepoController extends ImageRepoService {
     }
   }
 
-  async retrieve(event: any, context: Context): Promise<PreparedResult> {
+  async retrieve(
+    event: APIGatewayEvent,
+    context: Context
+  ): Promise<PreparedResult> {
     this.logExecution(context);
     const name = this.parseNamePathParam(event);
     if (!name) return MessageUtils.imageNotFoundResponse(name);
@@ -65,7 +71,10 @@ export default class ImageRepoController extends ImageRepoService {
     }
   }
 
-  async optionsAllowCors(_: any, context: Context): Promise<PreparedResult> {
+  async optionsAllowCors(
+    _: APIGatewayEvent,
+    context: Context
+  ): Promise<PreparedResult> {
     this.logExecution(context);
     return {
       statusCode: StatusCode.success,
@@ -78,7 +87,7 @@ export default class ImageRepoController extends ImageRepoService {
     };
   }
 
-  private parseNamePathParam(event: any): string {
+  private parseNamePathParam(event: APIGatewayEvent): string {
     return event.pathParameters.name;
   }
 
