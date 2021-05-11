@@ -11,4 +11,6 @@ const awsconfig = {
 };
 
 const urlFor = (path = "/"): string => `${awsconfig.api.invokeUrl}${path}`;
-export { urlFor, awsconfig };
+const assetPrefix = process.env.ASSET_PREFIX || "";
+
+export { urlFor, awsconfig, assetPrefix };
